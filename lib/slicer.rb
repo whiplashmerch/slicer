@@ -2,18 +2,24 @@ class Slicer
   class << self
 
 	  def extract(model)
-			# abort "Please specify an Order ID" unless ENV['ID']
-			# abort "Unable to find order #{ENV['ID']}" unless order = Order.where(:id => ENV['ID']).first
 
+	  	# TODO: Move to config
 			# unless ENV['OUTPUT_DIR']
 				output_dir = "#{Rails.root.to_s}/test/data/slicer"
 			# else
 			# 	output_dir = ENV['OUTPUT_DIR'].sub(/\/$/, '')
 			# end
 
-			name = "#{model.class.name.underscore}_#{model.id}"
 
+			name = "#{model.class.name.underscore}_#{model.id}"
 			path = "#{output_dir}/#{name}.yml"
+
+			unless File.exists?(path) 
+				require 'fileutils'
+				# TODO: Move to config
+				FileUtils.mkdir_p 'test/data/slicer'
+			end
+
 			File.open(path, 'w') do |file|
 				file.write( model.to_yaml )
 			end
