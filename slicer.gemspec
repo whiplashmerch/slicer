@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.authors     = ["James Marks"]
   s.email       = 'james@whiplashmerch.com'
   s.files       = ["lib/slicer.rb"]
-  # s.homepage    = 'http://rubygems.org/gems/hola'
+  s.homepage    = 'https://github.com/whiplashmerch/slicer'
   s.license     = 'MIT'
 end
 
