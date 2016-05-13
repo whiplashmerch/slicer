@@ -1,9 +1,9 @@
 Gem::Specification.new do |s|
   s.name        = 'slicer'
-  s.version     = '0.0.0'
+  s.version     = '0.0.1'
   s.date        = '2016-05-13'
   s.summary     = "Slicer"
-  s.description = "Extract relations of a single record from a Rails database for use in testing and devlopment"
+  s.description = "Extract relations of a single record from a Rails database for use in testing and development"
   s.authors     = ["James Marks"]
   s.email       = 'james@whiplashmerch.com'
   s.files       = ["lib/slicer.rb"]
@@ -15,3 +15,10 @@ end
 # Make the updates
 # gem buiild slicer.gemspec 
 # restart server / console
+
+# Local development:
+# gem 'slicer', :path => "/Library/Webserver/slicer" # Local development of the slicer gem
+
+
+# Production testing, pre-release
+# gem 'slicer', :git => 'https://github.com/whiplashmerch/slicer.git'
