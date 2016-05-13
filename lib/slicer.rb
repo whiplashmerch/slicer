@@ -1,8 +1,4 @@
 class Slicer
-  def self.hi
-    puts "Hello world!"
-  end
-
   class << self
 
 	  def extract(model)
