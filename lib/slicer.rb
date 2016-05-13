@@ -66,6 +66,12 @@ class Slicer
 							# elements that get called directly, like @order.order_items
 							file.write( model.send(k).to_yaml) rescue nil 
 						else
+
+							# if its singular, iterate over itself instead of the children
+							if k.to_s.singularize == k.to_s
+								file.write( model.send(k).send(v).to_yaml ) rescue nil
+							end
+
 							# elements that are distant relatives, like @order.order_items.each do |order_item| order_item.originator end
 							model.send(k).map { |child| file.write( child.send(v).to_yaml ) } rescue nil
 						end
