@@ -1,7 +1,7 @@
 class Slicer
   class << self
 
-	  def extract(model)
+	  def export(model)
 
 	  	# TODO: Move to config
 			# unless ENV['OUTPUT_DIR']
@@ -27,7 +27,7 @@ class Slicer
 			recursive_yaml(model, belongs_to_relations(model), path)
 			recursive_yaml(model, manual_relations(model), path)
 
-			puts "Extraction saved to #{path}"
+			puts "Export saved to #{path}"
 		end
 
 		# belongs_to, based on existence of an _id suffix in columns
@@ -73,6 +73,23 @@ class Slicer
 				end
 			end
 		end
+
+		def import(handle)
+	    path="#{Rails.root.to_s}/test/data/slicer/#{handle}.yml"
+	    return false unless File.exists?(path)
+
+	    # YAML chokes trying to read classes if they haven't been used yet, so we just touch the classes in the file
+	    lines = File.readlines(path).map{ |line| line.gsub(/!ruby\/object:/x, '').gsub("-",'').strip.constantize if line.include?("!ruby/object:")}
+
+	    File.open(path, 'r') do |file|
+	      YAML::load_documents(file).flatten.each do |record|
+	        # TODO: optionally replace or abort if record already exists. Currently records are silently *not* updated or overwritten
+	        record.class.new(record.attributes, :without_protection => true).sneaky_save if record
+	      end
+	    end 
+	    true
+		end
+
 end
 
 end
