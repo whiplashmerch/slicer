@@ -34,7 +34,7 @@ namespace :slicer do
 	    within release_path do
 	      with rails_env: fetch(:rails_env) do
 	        execute :rake, "slicer:export MODEL=#{ENV['MODEL']} ID=#{ENV['ID']}"
-	        download! "#{release_path}/test/data/slicer/#{ENV['MODEL']}#{ENV['ID']}.yml", "/YOUR/LOCAL/RAILS/ROOT/test/data/slicer"
+	        download! "#{release_path}/test/data/slicer/#{ENV['MODEL']}#{ENV['ID']}.yml", "test/data/slicer"
 	      end
 	    end 
 	  end
