@@ -1,5 +1,5 @@
 #Slicer
-Export related records from one environment and import into another
+Export related records from one environment and import into another.
 
 Add to your gemfile:
 
@@ -61,14 +61,14 @@ class OrdersControllerTest < ActionController::TestCase
 end
 ```
 
-### Console Usage
+### Console
 Exporting can be done directly in the console. This will execute against the console environment's database:
 ```ruby
 Slicer.export( Order.find(1234) )
 => 'Export saved to /your/rails/root/test/data/slicer/Order1234.yml'
 ```
 
-Imports can be made into the database for your console environment's database
+Imports can be made into your console environment's database
 ```ruby
 Slicer.import( 'Order1234' )
 => true
