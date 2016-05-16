@@ -44,6 +44,8 @@ class Slicer
 			case ar_instance.class.name
 			when 'Order'
 				[:account_transactions, :billed_rates, :originator, {:customer => :rules},{:items => :originators}, {:order_status_transactions => :user}, {:order_items => :originator}]
+			when 'Shipnotice','ConsumerReturn'
+				[{:shipnotice_items => :allocations}]
 			else
 				[]
 			end

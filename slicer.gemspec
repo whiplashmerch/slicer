@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'slicer'
-  s.version     = '0.0.2'
+  s.version     = '0.0.3'
   s.date        = '2016-05-13'
   s.summary     = "Slicer"
   s.description = "Extract relations of a single record from a Rails database for use in testing and development"
