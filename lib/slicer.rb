@@ -9,7 +9,7 @@ class Slicer
 			name = "#{ar_instance.class.name}#{ar_instance.id}"
 			path = "#{output_dir}/#{name}.yml"
 
-			unless File.exists?(path) 
+			unless File.exists?(path)
 				require 'fileutils'
 				FileUtils.mkdir_p output_dir
 			end
@@ -60,7 +60,7 @@ class Slicer
 					File.open(path, 'a') do |file|
 						if v.nil?
 							# elements that get called directly, like @order.order_items
-							file.write( ar_instance.send(k).to_yaml) rescue nil 
+							file.write( ar_instance.send(k).to_yaml) rescue nil
 						else
 
 							# if its singular, iterate over itself instead of the children
@@ -88,7 +88,7 @@ class Slicer
 	        # TODO: optionally replace or abort if record already exists. Currently records are silently *not* updated or overwritten
 	        record.class.new(record.attributes, :without_protection => true).sneaky_save if record
 	      end
-	    end 
+	    end
 	    true
 		end
 
