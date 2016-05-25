@@ -9,7 +9,9 @@ class Slicer
 			name = "#{ar_instance.class.name}#{ar_instance.id}"
 			path = "#{output_dir}/#{name}.yml"
 
-			unless File.exists?(path)
+      if File.exists?(path)
+        puts "WARNING: #{name}.yml already exists! overwriting..."
+      else
 				require 'fileutils'
 				FileUtils.mkdir_p output_dir
 			end
