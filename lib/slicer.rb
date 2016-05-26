@@ -1,7 +1,7 @@
 class Slicer
   class << self
 
-	  def export(ar_instance)
+	  def export(ar_instance, relations = nil)
 
 	  	# TODO: Move to config
 	  	output_dir = "#{Rails.root.to_s}/test/data/slicer"
@@ -19,27 +19,66 @@ class Slicer
 			File.open(path, 'w') do |file|
 				file.write( ar_instance.to_yaml )
 			end
-			recursive_yaml(ar_instance, has_many_relations(ar_instance), path)
-			recursive_yaml(ar_instance, belongs_to_relations(ar_instance), path)
-			recursive_yaml(ar_instance, manual_relations(ar_instance), path)
+      relations ||= combined_relations(ar_instance)
+			recursive_yaml(ar_instance, relations, path)
 
 			puts "Export saved to #{path}"
 		end
+
+    # so we only call recursive_yaml once
+    def combined_relations(ar_instance)
+      combined = has_many_relations(ar_instance) + belongs_to_relations(ar_instance) + manual_relations(ar_instance)
+      combined.map{|i| i.is_a?(Hash) ? i : i.to_sym }.uniq
+    end
+
+    # list of tables worth looking at
+    def real_tables
+      all_tables = ActiveRecord::Base.connection.tables
+      all_tables.reject{ |table| false unless table.classify.constantize rescue true }
+    end
+
+    # results of all the different relations methods, for comparison
+    def hash_of_methods(ar_instance)
+      {
+        :has_many => has_many_relations(ar_instance),
+        :belongs_to => belongs_to_relations(ar_instance),
+        :manual => manual_relations(ar_instance),
+        :responds_to => responds_to_relations(ar_instance),
+        :reflections => ar_instance.reflections.keys.sort
+      }
+    end
+
+    # hash_of_methods for all the tables at once
+    def all_tables_hash
+      first_instances = real_tables.map{|table| table.classify.constantize.first }.compact
+      first_instances.map{|ar_instance|
+        { ar_instance.class.name.to_sym => hash_of_methods(ar_instance) }
+      }
+    end
+
+
 
 		# belongs_to, based on existence of an _id suffix in columns
 		def belongs_to_relations(ar_instance)
 			columns = ar_instance.class.column_names
 			parents = columns.map{ |c| c if c =~ /_id/ }.reject{ |c| c.nil? }
-			parents.map!{ |parents| parents.gsub('_id', '') }
+			parents.map{ |parents| parents.gsub('_id', '').to_sym }
 		end
 
 		# has_many, based on existence of a xxx_id column in other tables
 		def has_many_relations(ar_instance)
 			column_name = "#{ar_instance.class.name.underscore}_id"
-			descendents = ActiveRecord::Base.connection.tables
-			descendents.reject!{ |table| false unless table.classify.constantize rescue true }
-			descendents.reject!{ |table| true unless table.classify.constantize.column_names.include?(column_name) }
+			real_tables.reject{ |table| true unless table.classify.constantize.column_names.include?(column_name) }.map(&:to_sym)
 		end
+
+    # responds_to, based on the success to responds_to
+    # yet another method to be replaced with a simple ar_instance.reflections.keys ?
+    def responds_to_relations(ar_instance)
+      descendents = real_tables
+      descendents -= ["transactions"] # everything responds_to reserved keywords
+      descendents += descendents.map{|i| i.singularize}
+      descendents.reject{ |table| !ar_instance.respond_to?(table.to_sym) }.map(&:to_sym)
+    end
 
 		# TODO: Move to config
 		def manual_relations(ar_instance)
