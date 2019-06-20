@@ -86,7 +86,7 @@ class Slicer
 	    lines = File.readlines(path).map{ |line| line.gsub(/!ruby\/object:/x, '').gsub("-",'').strip.constantize if line.include?("!ruby/object:")}
 
 	    File.open(path, 'r') do |file|
-	      YAML::load_documents(file).flatten.each do |record|
+	      YAML::load_stream(file).flatten.each do |record|
 	        # TODO: optionally replace or abort if record already exists. Currently records are silently *not* updated or overwritten
 	        record.class.new(record.attributes, :without_protection => true).sneaky_save if record
 	      end
